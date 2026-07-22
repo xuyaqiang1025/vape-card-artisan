@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /*
+   * ═══════════════════════════════════════════════
+   * 雾卡匠 VapeCard Artisan · template-v3.html
+   * ═══════════════════════════════════════════════
+   * 模板使用方法：
+   *   1. 替换 :root 中的 CSS 变量为 Phase 2 确认的色彩体系
+   *   2. 替换所有 {{PLACEHOLDER}} 为 Phase 0 确认的参数
+   *   3. 用 Python base64 嵌入渲染图（standalone 版）
+   *
+   * 占位符索引：
+   *   {{TITLE}}            页面标题
+   *   {{COLOR_CSS}}        :root 色彩变量（4-8 个）
+   *   {{MAIN_RGB}}         card box-shadow rgba 值
+   *   {{HERO_IMAGE}}       渲染图 src（路径或 data:URL）
+   *   {{HERO_COLOR}}       hero::after 底边渐变参数
+   *   {{PRODUCT_NO}}       编号 "023"
+   *   {{NAME_EN}}          英文名 HTML（含 &amp; 或纯文本）
+   *   {{NAME_CN}}          中文名
+   *   {{CATEGORY}}         品类标签
+   *   {{SPEC_NO}}          档案编号
+   *   {{EXTRACTION_ROWS}}  EXTRACT pill 行（含色标+pill HTML）
+   *   {{EXTRACT_DESC}}     EXTRACT 描述句
+   *   {{RADAR_SVG}}        完整的雷达 SVG（含网格+数据+标签）
+   *   {{ACCORD_ROWS}}      香韵条 5-7 行 HTML
+   *   {{SPECTRUM_GRADIENT}}色谱条渐变 CSS
+   *   {{SPECTRUM_TICKS}}   三段色谱文案
+   *   {{SENSORY_BLOCKS}}   感官四段 HTML
+   *   {{YEARS}}            当前年份
+   * ═══════════════════════════════════════════════
+   */
+  :root{
+    {{COLOR_CSS}}
+    --oatmeal:#EAE4DA;
+    --oatmeal-light:#F2EDE5;
+    --ink:#2A2218;
+    --ink-soft:#6B5F52;
+    --ink-mute:#9C8E7E;
+    --line:#D4C9BA;
+    --line-fine:#E5DDD0;
+    --grid:#8C7A66;
+
+    --f:'Cormorant Garamond','Noto Serif SC',serif;
+    --f-cn:'Noto Serif SC','Cormorant Garamond',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--f);
+    background:#D2C9BE;
+    background-image:radial-gradient(circle at 30% 20%, #E4DBD2 0%, #D2C9BE 60%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:36px 16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{
+    width:100%;
+    max-width:600px;
+    background:var(--oatmeal);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba({{MAIN_RGB}},.4),0 8px 24px -8px rgba({{MAIN_RGB}},.22);
+    animation:fadeUp 1s ease both;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  .content{padding:0 48px 52px}
+
+  .hero{
+    position:relative;width:100%;
+    aspect-ratio:3/2;overflow:hidden;
+    background:#2A2218;
+    margin-bottom:38px;
+  }
+  .hero img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.6s ease;filter:saturate(.95) contrast(1.05)}
+  .card:hover .hero img{transform:scale(1.03)}
+  .hero::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,{{HERO_COLOR}});
+    pointer-events:none;
+  }
+  .hero-tag{
+    position:absolute;top:22px;left:24px;
+    font-family:var(--f);font-weight:500;font-size:16px;
+    letter-spacing:.22em;color:#F0EAE0;
+  }
+  .hero-corner{
+    position:absolute;top:22px;right:24px;
+    font-family:var(--f);font-weight:400;font-size:11px;
+    letter-spacing:.3em;color:rgba(240,234,224,.82);
+    text-align:right;line-height:1.6;
+  }
+
+  .nameplate{margin-bottom:36px;padding-top:4px}
+  .name-en{
+    font-family:var(--f);font-style:italic;font-weight:600;font-size:48px;
+    color:var(--caramel-deep);letter-spacing:.14em;line-height:1.05;
+  }
+  .name-en .amp{font-weight:400;font-style:italic;color:var(--caramel);margin:0 .04em}
+  .name-cn{
+    font-family:var(--f-cn);font-weight:300;font-size:24px;
+    color:var(--ink-soft);letter-spacing:.3em;margin-top:8px;
+  }
+  .category{
+    font-family:var(--f);font-weight:400;font-size:11px;
+    letter-spacing:.42em;color:var(--ink-mute);margin-top:14px;
+  }
+
+  .hairline{
+    height:.5px;background:var(--caramel);opacity:.22;margin:0 0 28px;
+  }
+
+  .section-title-en{
+    font-family:var(--f);font-style:italic;font-weight:600;font-size:22px;
+    color:var(--caramel-deep);letter-spacing:.12em;line-height:1.2;
+  }
+  .section-title-cn{
+    font-family:var(--f-cn);font-weight:400;font-size:11px;
+    color:var(--ink-soft);letter-spacing:.28em;margin-top:4px;
+  }
+  .section-title-sub{
+    font-family:var(--f);font-weight:300;font-size:9px;
+    color:var(--ink-mute);letter-spacing:.4em;text-transform:uppercase;margin-top:3px;
+  }
+
+  .specs{margin-bottom:34px}
+  .spec-no{
+    font-family:var(--f);font-weight:500;font-size:13px;
+    color:var(--ink-soft);letter-spacing:.16em;
+    margin-bottom:18px;display:flex;align-items:center;gap:12px;
+  }
+  .spec-no::after{
+    content:'';flex:1;height:.5px;background:var(--line);
+  }
+  .spec-row{
+    display:grid;
+    grid-template-columns:4px 1fr;
+    align-items:flex-start;gap:14px;
+    padding:9px 0;
+  }
+  .spec-tag{width:3px;height:18px;border-radius:1px;margin-top:2px}
+  .spec-viz{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;min-height:14px}
+  .viz-pills{display:flex;gap:6px;align-items:center}
+  .viz-pill{
+    font-family:var(--f);font-weight:500;font-size:11px;font-style:normal;
+    background:var(--caramel-deep);color:var(--oatmeal);
+    padding:5px 12px;letter-spacing:.18em;
+  }
+  .viz-plus{font-family:var(--f);font-weight:400;font-size:15px;color:var(--ink-mute);font-style:normal}
+
+  .extract-desc{
+    font-family:var(--f-cn);font-weight:400;font-size:13.5px;
+    line-height:1.78;color:var(--ink-soft);letter-spacing:.04em;
+    margin-top:6px;max-width:420px;
+  }
+
+  .flavor-data{margin-bottom:38px}
+  .flavor-data .section-title-sub{margin-bottom:14px}
+  .flavor-grid{
+    display:flex;flex-wrap:wrap;gap:0;
+  }
+  .flavor-left{
+    flex:1 1 260px;min-width:240px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .flavor-right{
+    flex:1 1 240px;min-width:220px;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:8px 0 8px 8px;
+  }
+
+  .radar-svg{width:240px;height:240px}
+  .radar-data{transform-origin:120px 120px;animation:radarGrow 1.4s cubic-bezier(.34,1.3,.64,1) .5s both}
+  @keyframes radarGrow{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  .radar-axis-label{font-family:var(--f-cn);font-weight:400;font-size:11px;fill:var(--ink)}
+  .radar-axis-score{font-family:var(--f);font-weight:500;font-size:13px;fill:var(--caramel-deep);font-style:normal}
+  .radar-scale{font-family:var(--f);font-weight:400;font-size:11px;fill:var(--ink-mute);font-style:normal}
+  .specimen-no{
+    text-align:center;margin-top:6px;
+    font-family:var(--f);font-weight:400;font-size:11px;
+    color:var(--ink-mute);letter-spacing:.32em;font-style:normal;
+  }
+
+  .accord-row{
+    display:grid;grid-template-columns:110px 1fr 32px;
+    align-items:center;gap:10px;padding:6px 0;
+  }
+  .accord-name{font-family:var(--f);font-weight:400;font-size:13px;color:var(--ink);letter-spacing:.06em;font-style:normal}
+  .accord-name .cn{font-family:var(--f-cn);font-weight:300;color:var(--ink-soft);margin-left:4px;font-size:11px}
+  .accord-bar-bg{height:3px;background:var(--line-fine);border-radius:1px;overflow:hidden}
+  .accord-bar{height:100%;border-radius:1px}
+  .accord-pct{font-family:var(--f);font-weight:500;font-size:13px;color:var(--ink-soft);text-align:right;font-style:normal}
+
+  .spectrum{margin-bottom:38px}
+  .spectrum-bar{
+    height:3px;border-radius:1px;
+    background:{{SPECTRUM_GRADIENT}};
+    margin-bottom:10px;
+  }
+  .spectrum-ticks{
+    display:flex;justify-content:space-between;
+    font-family:var(--f);font-weight:400;font-size:10px;
+    color:var(--ink-mute);letter-spacing:.28em;font-style:normal;
+  }
+
+  .sensory{margin-bottom:40px}
+  .sense-block{margin-bottom:26px}
+  .sense-block:last-child{margin-bottom:0}
+  .sense-label{
+    font-family:var(--f);font-style:italic;font-weight:600;font-size:24px;
+    color:var(--caramel-deep);letter-spacing:.1em;line-height:1.2;
+    margin-bottom:4px;
+  }
+  .sense-sub{
+    font-family:var(--f);font-weight:300;font-size:10px;
+    color:var(--ink-mute);letter-spacing:.4em;
+    margin-bottom:12px;text-transform:uppercase;font-style:normal;
+  }
+  .sense-text{
+    font-family:var(--f-cn);font-weight:400;font-size:15px;
+    line-height:2;color:var(--ink);
+    letter-spacing:.04em;
+  }
+
+  .footer{
+    padding-top:20px;border-top:.5px solid var(--line);
+  }
+  .footer-mark{
+    font-family:var(--f);font-weight:500;font-size:12px;
+    color:var(--ink-mute);letter-spacing:.32em;margin-bottom:8px;font-style:normal;
+  }
+  .footer-note{
+    font-family:var(--f);font-weight:300;font-size:11px;
+    line-height:1.7;color:var(--ink-mute);letter-spacing:.08em;font-style:normal;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="hero">
+      <img src="{{HERO_IMAGE}}" alt="{{NAME_CN}} Still Life">
+      <div class="hero-tag">N°&thinsp;{{PRODUCT_NO}}</div>
+      <div class="hero-corner">VAPECARD<br>ATELIER</div>
+    </div>
+
+    <div class="content">
+      <!-- 铭牌 -->
+      <div class="nameplate">
+        <div class="name-en">{{NAME_EN}}</div>
+        <div class="name-cn">{{NAME_CN}}</div>
+        <div class="category">{{CATEGORY}}</div>
+      </div>
+
+      <div class="hairline"></div>
+
+      <!-- 技术参数区 — EXTRACT -->
+      <div class="specs">
+        <div class="section-title-en">Extract</div>
+        <div class="section-title-cn">提取工艺</div>
+        <div class="section-title-sub">Extraction method</div>
+        <div class="spec-no">{{SPEC_NO}}</div>
+        {{EXTRACTION_ROWS}}
+        <div class="extract-desc">{{EXTRACT_DESC}}</div>
+      </div>
+
+      <!-- FLAVOR DATA — 雷达 + ACCORDS 并排 -->
+      <div class="flavor-data">
+        <div class="section-title-en">Flavor Data</div>
+        <div class="section-title-cn">风味数据</div>
+        <div class="section-title-sub">Sensory metrics in profile</div>
+        <div class="flavor-grid">
+          <div class="flavor-left">
+            {{RADAR_SVG}}
+            <div class="specimen-no">Specimen &middot; R &middot; {{PRODUCT_NO}}</div>
+          </div>
+          <div class="flavor-right">
+            {{ACCORD_ROWS}}
+          </div>
+        </div>
+      </div>
+
+      <!-- 液体色谱条 -->
+      <div class="spectrum">
+        <div class="section-title-en">Flavor</div>
+        <div class="section-title-cn">风味色谱</div>
+        <div class="section-title-sub">Top &middot; mid &middot; base</div>
+        <div class="spectrum-bar"></div>
+        <div class="spectrum-ticks">
+          {{SPECTRUM_TICKS}}
+        </div>
+      </div>
+
+      <!-- 感官四段 -->
+      <div class="sensory">
+        {{SENSORY_BLOCKS}}
+      </div>
+
+      <!-- 合规脚注 -->
+      <div class="footer">
+        <div class="footer-mark">VapeCard Atelier &middot; MM{{YEARS}}</div>
+        <div class="footer-note">本描述仅指香韵与雾气体感，不涉及功效宣称<br>Flavor sensory description only &middot; no efficacy claim</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
