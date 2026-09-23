@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{{TITLE}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-serif: "Cormorant Garamond", "Noto Serif SC", Georgia, serif;
+    --font-cn: "Noto Serif SC", "Cormorant Garamond", serif;
+    --color-ink: #2A2522;
+    --color-ink-soft: #8C7A66;
+    {{COLOR_CSS}}
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1280px; height: 720px;
+    background: #F6F7F0;
+    font-family: var(--font-serif);
+    color: var(--color-ink);
+    overflow: hidden;
+  }
+  .card { padding: 28px 40px 20px; height: 100%; display: grid;
+    grid-template-columns: 304px 26px 1fr 26px 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 0; }
+
+  /* head + foot 横跨 5 列 */
+  .head, .foot { grid-column: 1 / -1; }
+
+  /* head */
+  .head { display: flex; justify-content: space-between; align-items: baseline;
+    font-style: italic; font-weight: 400; font-size: 10.5px;
+    letter-spacing: .4em; color: var(--color-ink-soft);
+    padding-bottom: 8px; border-bottom: .5px solid #DED5C6; }
+
+  /* body 区：三栏 (hero / 文案 / 数据) */
+  .hero { grid-column: 1; grid-row: 2;
+    width: 304px; height: 100%;
+    border-radius: 2px; overflow: hidden; position: relative;
+    background: #2A2218; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+  .hero .badge {
+    position: absolute; top: 12px; left: 12px;
+    font-style: italic; font-weight: 500; font-size: 10px;
+    letter-spacing: .32em; color: #F0EAE0;
+    background: rgba(42,34,24,.65); padding: 4px 10px; border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  .hero .no { position: absolute; bottom: 12px; right: 14px;
+    font-style: italic; font-weight: 500; font-size: 10.5px;
+    letter-spacing: .32em; color: #F0EAE0; opacity: .9;
+    background: rgba(42,34,24,.72); padding: 4px 10px; border-radius: 999px;
+    backdrop-filter: blur(4px); }
+
+  .middle { grid-column: 3; grid-row: 2;
+    display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .right { grid-column: 5; grid-row: 2;
+    display: flex; flex-direction: column; align-items: center;
+    min-width: 0; padding-left: 4px; }
+
+  /* 铭牌 */
+  .plate .en {
+    font-style: italic; font-weight: 600;
+    font-size: 36px; letter-spacing: .14em; line-height: 1; color: var(--color-ink);
+  }
+  .plate .cn {
+    font-family: var(--font-cn); font-weight: 300; font-size: 18px;
+    letter-spacing: .3em; color: var(--color-ink-soft); margin-top: 7px;
+  }
+  .plate .cat {
+    font-style: italic; font-weight: 400; font-size: 9.5px;
+    letter-spacing: .4em; color: var(--accent); margin-top: 9px;
+  }
+  .plate .plate-div { width: 22px; height: 1px; background: var(--accent);
+    margin: 12px 0 8px; opacity: .55; }
+  .plate .origin-label {
+    font-style: italic; font-weight: 400; font-size: 9px;
+    letter-spacing: .35em; color: var(--color-ink-soft);
+  }
+  .plate .origin-cn {
+    font-family: var(--font-cn); font-weight: 400; font-size: 12.5px;
+    letter-spacing: .06em; color: var(--color-ink); margin-top: 5px;
+  }
+  .plate .origin-en {
+    font-style: italic; font-weight: 400; font-size: 10.5px;
+    letter-spacing: .12em; color: var(--color-ink-soft); margin-top: 2px;
+  }
+
+  /* 段标题 */
+  .sec-title {
+    font-style: italic; font-weight: 600;
+    font-size: 17px; letter-spacing: .1em; line-height: 1.1;
+  }
+  .sec-sub {
+    font-family: var(--font-cn); font-weight: 300; font-size: 9.5px;
+    letter-spacing: .35em; color: var(--color-ink-soft); margin-top: 2px;
+  }
+  .rule { width: 26px; height: 1px; background: var(--accent); margin: 6px 0 8px; }
+  .body-cn {
+    font-family: var(--font-cn); font-weight: 400; font-size: 12.5px;
+    line-height: 1.85; letter-spacing: .03em; color: #3E362F;
+  }
+
+  /* pills */
+  .pills { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .pill {
+    font-style: italic; font-weight: 500; font-size: 10px;
+    letter-spacing: .26em; padding: 4px 11px; border-radius: 999px;
+  }
+  .pill i { font-family: var(--font-cn); font-style: normal; font-size: 9px;
+    letter-spacing: .12em; margin-left: 6px; opacity: .72; }
+  .extract-desc {
+    font-family: var(--font-cn); font-weight: 400; font-size: 11.5px;
+    line-height: 1.7; letter-spacing: .03em; color: var(--color-ink-soft);
+  }
+
+  /* 色谱条 */
+  .spectrum { height: 9px; border-radius: 2px; margin-bottom: 9px;
+    background: {{SPECTRUM_GRADIENT}}; }
+  .ticks { display: flex; justify-content: space-between; }
+  .tick { display: flex; flex-direction: column; gap: 2px; }
+  .tick b { font-style: italic; font-weight: 500; font-size: 10px;
+    letter-spacing: .3em; color: var(--accent-deep); }
+  .tick i { font-style: italic; font-weight: 400; font-size: 9px;
+    letter-spacing: .2em; color: #5A504B; }
+  .tick u { font-family: var(--font-cn); text-decoration: none; font-weight: 300;
+    font-size: 10px; letter-spacing: .14em; color: var(--color-ink-soft); }
+
+  /* 右栏 radar + accords */
+  .radar-wrap { display: flex; flex-direction: column; align-items: center; }
+  .specimen {
+    font-style: italic; font-weight: 400; font-size: 10px;
+    letter-spacing: .4em; color: var(--color-ink-soft); margin-top: 2px;
+  }
+  .accords { width: 100%; max-width: 310px; margin-top: 12px; }
+  .accord-row { display: grid; grid-template-columns: 82px 1fr 30px;
+    align-items: center; gap: 8px; margin-bottom: 7px; }
+  .accord-name { font-style: italic; font-weight: 500;
+    font-size: 12px; letter-spacing: .14em; color: #3E362F; }
+  .accord-bar { height: 3px; background: #E6DFD3; border-radius: 2px; overflow: hidden; }
+  .accord-bar i { display: block; height: 100%; border-radius: 2px; }
+  .accord-pct { font-style: italic; font-weight: 500;
+    font-size: 12px; text-align: right; color: var(--color-ink-soft); }
+
+  /* foot */
+  .foot { display: flex; justify-content: space-between; align-items: center;
+    padding-top: 10px; border-top: .5px solid #DED5C6; margin-top: 4px;
+    font-style: italic; font-weight: 400; font-size: 9.5px;
+    letter-spacing: .3em; color: var(--color-ink-soft); }
+  .foot .roman { letter-spacing: .5em; color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="head">
+    <span>ORIVA &middot; CARD &middot; PORTABLE VAPE</span>
+    <span>Spec. N&deg;&thinsp;{{PRODUCT_NO}} &middot; {{PINYIN}} &middot; 07.2026</span>
+  </div>
+
+  <div class="hero">
+    <img src="{{HERO_IMAGE}}" alt="{{NAME_CN}}">
+    <span class="badge">NO. {{PRODUCT_NO}}</span>
+    <span class="no">ORIVA</span>
+  </div>
+
+  <div class="middle">
+    <div class="plate">
+      <div class="en">{{NAME_EN}}</div>
+      <div class="cn">{{NAME_CN}}</div>
+      <div class="cat">{{CATEGORY}}</div>
+      <div class="plate-div"></div>
+      <div class="origin-label">ORIGIN &middot; 产地</div>
+      <div class="origin-cn">{{ORIGIN_CN}}</div>
+      <div class="origin-en">{{ORIGIN_EN}}</div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Tonality</div>
+      <div class="sec-sub">香韵定调</div>
+      <div class="rule"></div>
+      <p class="body-cn">{{TONALITY}}</p>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Extract</div>
+      <div class="sec-sub">提取工艺</div>
+      <div class="rule"></div>
+      <div class="pills">{{EXTRACT_PILLS}}</div>
+      <p class="extract-desc">{{EXTRACT_DESC}}</p>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Chromatic Scale</div>
+      <div class="sec-sub">风味色谱</div>
+      <div class="rule"></div>
+      <div class="spectrum"></div>
+      <div class="ticks">{{SPECTRUM_TICKS}}</div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="sec-title">Flavor Data</div>
+    <div class="sec-sub">风味数据</div>
+    <div class="rule"></div>
+    <div class="radar-wrap">
+      {{RADAR_SVG}}
+      <div class="specimen">Specimen R&middot;{{PRODUCT_NO}}</div>
+    </div>
+    <div class="accords">
+      <div class="sec-title" style="font-size:14px;">Main Accords</div>
+      <div class="sec-sub" style="font-size:8.5px;">香韵分路</div>
+      <div style="margin-top:10px;">{{ACCORD_ROWS}}</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>本描述仅指香韵与雾气体感，不涉及功效宣称</span>
+    <span class="roman">{{YEARS}}</span>
+  </div>
+
+</div>
+</body>
+</html>
